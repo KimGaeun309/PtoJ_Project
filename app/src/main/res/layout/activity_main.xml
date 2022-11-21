@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".MainActivity">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:weightSum="2">
+
+        <TextView
+            android:id = "@+id/view_date"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="view date"
+            android:textSize="28sp"
+            android:paddingLeft="16dp"
+            android:paddingRight="16dp"
+            android:paddingTop="16dp"
+            android:layout_weight="1"
+            />
+
+        <TextView
+            android:id = "@+id/view_time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="view time"
+            android:textSize="28sp"
+            android:padding="16dp"
+            android:layout_weight="1"
+            />
+
+    </LinearLayout>
+
+    <!--  임시로 요일별 시간표 나타날 부분 구분하기  -->
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        android:background="#999999"
+        android:textSize="28sp"
+        android:text="요일별 시간표를 나타낼 구역"
+        android:gravity="center">
+    </TextView>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="100dp"
+                android:text="Do Laundry 등과 같은 목록 표시할 구역"
+                android:textSize="28sp"
+                android:gravity="center">
+            </TextView>
+
+        </LinearLayout>
+    </ScrollView>
+
+    <Button
+        android:id="@+id/btn_menu"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="MENU"
+        tools:layout_editor_absoluteX="307dp"
+        tools:layout_editor_absoluteY="667dp"></Button>
+
+</LinearLayout>
