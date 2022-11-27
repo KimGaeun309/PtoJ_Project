@@ -1,4 +1,4 @@
-package com.example.custom_view;
+package com.example.ptoj_project;
 
 import android.content.Context;
 import android.graphics.Canvas;
@@ -57,7 +57,7 @@ public class CustomViewTimeTable extends View {
 
         Arc myArc;
         for (int i=0; i<myArcAttr.getLength(); i++) {
-            myArc = myArcAttr.arcList[i];
+            myArc = myArcAttr.ArcList[i];
             paint.setColor(Color.parseColor(myArc.getColor()));
             canvas.drawArc(rect, myArc.getStartAngle(), myArc.getSweepAngle(), true, paint);
         }
