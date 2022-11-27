@@ -20,6 +20,11 @@ public class MenuActivity extends AppCompatActivity {
         myArcAttr.addArc(0, 120, "#FF0000");
         myArcAttr.addArc(360, 90, "#00FF00");
 
+<<<<<<< HEAD
+=======
+        Toast.makeText(getApplicationContext(), "addArc() 를 사용해 부채꼴 두 개 생성", Toast.LENGTH_SHORT).show();
+
+>>>>>>> be20574da40abe73b490147fb7c1a9ee29a7758b
         // 커스텀뷰인 CustomViewTimeTable을 새로 만들어 setContentView()에 인자로 전달하면
         // CustomViewTimeTable 에서 만든 커스텀뷰가 화면에 나타난다.
         // CustomViewTimeTable 에서는 ArcArrSingleton 에 있는 배열에서 정보들을 가져와 부채꼴을 그린다.
