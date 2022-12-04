@@ -8,6 +8,7 @@ import android.widget.Toast;
 
 public class MenuActivity extends AppCompatActivity {
     ArcArrSingleton myArcAttr = ArcArrSingleton.getInstance();
+    private CustomViewTimeTable CustomViewTT;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -17,18 +18,13 @@ public class MenuActivity extends AppCompatActivity {
         // ArcArrSingleton 객체의 addArc(int startMin, int sweepMin, String color) 메서드를 사용하여
         // startMin 분 부터 sweepMin 분 동안의 시간을 color 로 칠해야 한다는 부채꼴 그릴 때 필요한 정보들을
         // 차례로 배열에 저장한다. (Singleton 객체이므로 이 배열은 전체 프로젝트에서 하나만 존재한다.)
-        myArcAttr.addArc(0, 120, "#FF0000");
-        myArcAttr.addArc(360, 90, "#00FF00");
+        myArcAttr.addArc(0, 120, 0);
+        myArcAttr.addArc(360, 90, 6);
 
-<<<<<<< HEAD
-=======
-        Toast.makeText(getApplicationContext(), "addArc() 를 사용해 부채꼴 두 개 생성", Toast.LENGTH_SHORT).show();
 
->>>>>>> be20574da40abe73b490147fb7c1a9ee29a7758b
-        // 커스텀뷰인 CustomViewTimeTable을 새로 만들어 setContentView()에 인자로 전달하면
-        // CustomViewTimeTable 에서 만든 커스텀뷰가 화면에 나타난다.
-        // CustomViewTimeTable 에서는 ArcArrSingleton 에 있는 배열에서 정보들을 가져와 부채꼴을 그린다.
-        CustomViewTimeTable view = new CustomViewTimeTable(this);
-        setContentView(view);
+        //Toast.makeText(getApplicationContext(), "addArc() 를 사용해 부채꼴 두 개 생성", Toast.LENGTH_SHORT).show();
+
+        // activity_menu.xml 에 만들어 둔 CustomViewTimeTable 뷰를 id로 가져오기
+        CustomViewTT = (CustomViewTimeTable) findViewById(R.id.customViewTT);
     }
 }

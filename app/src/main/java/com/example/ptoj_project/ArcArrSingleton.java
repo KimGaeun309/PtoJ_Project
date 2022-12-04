@@ -20,8 +20,8 @@ public class ArcArrSingleton {
         return myArcAttr;
     }
 
-    public void addArc(int startMin, int sweepMin, String color) {
-        ArcList[idx] = new Arc(startMin, sweepMin, color);
+    public void addArc(int startMin, int sweepMin, int routine) {
+        ArcList[idx] = new Arc(startMin, sweepMin, routine);
         idx += 1;
     }
 
