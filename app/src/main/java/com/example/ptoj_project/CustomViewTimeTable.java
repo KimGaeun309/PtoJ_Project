@@ -1,6 +1,9 @@
 package com.example.ptoj_project;
 
+
+
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -112,9 +115,6 @@ public class CustomViewTimeTable extends View {
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         boolean value = super.onTouchEvent(event);
-//        setWillNotDraw(false);
-
-
 
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN: {
@@ -125,7 +125,6 @@ public class CustomViewTimeTable extends View {
                 int x = (int) event.getX();
                 int y = (int) event.getY();
                 double dx, dy;
-
 
                 for(int i=0; i<6; i++) {
                     dx = Math.pow(x - routineCircles[i][0], 2);
@@ -156,10 +155,14 @@ public class CustomViewTimeTable extends View {
                         dy = Math.pow(y - routineCircles[i][1], 2);
                         if (dx + dy < Math.pow(routineCircles[i][2], 2)) {
                             // Dropped
-
                             Toast.makeText(getContext(), "dropped", Toast.LENGTH_SHORT).show();
 
-                            myArcAttr.addArc(500, 60,  i);
+
+                            Intent myintent = new Intent(getContext(), TimePicker.class);
+                            myintent.putExtra("idx", i);
+                            getContext().startActivity(myintent);
+
+                            //myArcAttr.addArc(500, 60,  i);
 
                             routineCircles[i][0] = routineCirclesBase[i][0];
                             routineCircles[i][1] = routineCirclesBase[i][1];
