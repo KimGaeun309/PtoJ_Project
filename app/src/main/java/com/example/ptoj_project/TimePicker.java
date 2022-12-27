@@ -52,8 +52,7 @@ public class TimePicker extends AppCompatActivity {
             public void onTimeChanged(android.widget.TimePicker timePicker, int hour, int minute) {
                 // 오전 / 오후 를 확인하기 위한 if 문
                 if (hour > 12) {
-                    hour -= 12;
-                    tv_time.setText("오후 " + hour + "시 " + minute + "분 선택");
+                    tv_time.setText("오후 " + (hour - 12) + "시 " + minute + "분 선택");
                 } else {
                     tv_time.setText("오전 " + hour + "시 " + minute + "분 선택");
                 }
