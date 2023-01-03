@@ -2,19 +2,13 @@ package com.example.ptoj_project;
 
 
 import androidx.appcompat.app.AppCompatActivity;
-
-
 import android.os.Bundle;
-
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
-
 import android.os.Handler;
 import android.os.Message;
-
 import android.content.Intent;
-
 import java.util.TimeZone;
 import java.util.Date;
 import java.text.SimpleDateFormat;

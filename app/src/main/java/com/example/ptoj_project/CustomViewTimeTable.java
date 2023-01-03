@@ -1,7 +1,5 @@
 package com.example.ptoj_project;
 
-
-
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Canvas;
@@ -9,6 +7,7 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.RectF;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Toast;
@@ -95,6 +94,18 @@ public class CustomViewTimeTable extends View {
                 routineCircles[i][2] = radius / 4;
             }
             // 처음 draw할 때 hourXYs를 초기화.
+            int tmpAngle = 90;
+            for(int i=0; i<24; i++) {
+                hourXYs[i][0] = midpoint_x + radius * Math.cos(Math.toRadians(tmpAngle));
+                hourXYs[i][1] = midpoint_y + radius * -(Math.sin(Math.toRadians(tmpAngle)));
+                tmpAngle -= 15;
+                if (tmpAngle < 0) {
+                    tmpAngle = 345;
+                }
+                Log.i("태그", "cos(45) : "+Math.cos(45));
+                Log.i("태그", "sin(45) : "+Math.sin(45));
+            }
+
             hourXYs[0][0] = midpoint_x;
             hourXYs[0][1] = midpoint_y - radius;
             hourXYs[6][0] = midpoint_x + radius;
@@ -103,6 +114,8 @@ public class CustomViewTimeTable extends View {
             hourXYs[12][1] = midpoint_y + radius;
             hourXYs[18][0] = midpoint_x - radius;
             hourXYs[18][1] = midpoint_y;
+
+
 
         }
 
