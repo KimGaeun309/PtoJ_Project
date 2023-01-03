@@ -18,8 +18,8 @@ public class MenuActivity extends AppCompatActivity {
         // ArcArrSingleton 객체의 addArc(int startMin, int sweepMin, String color) 메서드를 사용하여
         // startMin 분 부터 sweepMin 분 동안의 시간을 color 로 칠해야 한다는 부채꼴 그릴 때 필요한 정보들을
         // 차례로 배열에 저장한다. (Singleton 객체이므로 이 배열은 전체 프로젝트에서 하나만 존재한다.)
-        myArcAttr.addArc(0, 120, 0);
-        myArcAttr.addArc(360, 90, 6);
+        // myArcAttr.addArc(0, 120, 0);
+        // myArcAttr.addArc(360, 90, 6);
 
 
         //Toast.makeText(getApplicationContext(), "addArc() 를 사용해 부채꼴 두 개 생성", Toast.LENGTH_SHORT).show();

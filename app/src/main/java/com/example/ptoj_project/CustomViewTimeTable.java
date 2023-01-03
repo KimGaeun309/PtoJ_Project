@@ -24,8 +24,10 @@ public class CustomViewTimeTable extends View {
     private int[][] routineCircles = new int[6][3];
     private int[][] routineCirclesBase = new int[6][3];
     private int[] timeCircle = new int[3];
+    private double[][] hourXYs = new double[24][2]; // hourXYs[i] 에는 i 시간에 해당하는 좌표를 2차원 배열로 저장
     int curr_routine = -1;
-
+    int curr_color;
+    boolean selectingTime; // 원의 중점에 루틴을 가져간 경우 시간을 선택해야 한다. 시간을 선택하는 중이라면 true, 아니라면 false이다.
     public CustomViewTimeTable(Context context) {
         super(context);
         init(context);
@@ -41,6 +43,7 @@ public class CustomViewTimeTable extends View {
         paintCircle = new Paint(Paint.ANTI_ALIAS_FLAG);
         myArcAttr = ArcArrSingleton.getInstance();
         routineCircles[0][0] = -1;
+        selectingTime = false;
     }
 
     @Override
@@ -61,6 +64,8 @@ public class CustomViewTimeTable extends View {
         int midpoint_x = canvas_width / 2;
         int midpoint_y = canvas_height / 3;
         int radius;
+
+
         if (midpoint_x < midpoint_y)
             radius = midpoint_x * 9 / 10;
         else
@@ -81,6 +86,7 @@ public class CustomViewTimeTable extends View {
         timeCircle[1] = midpoint_y;
         timeCircle[2] = radius;
         canvas.drawCircle(timeCircle[0], timeCircle[1], timeCircle[2], paintCircle);
+        canvas.drawPoint(timeCircle[0], timeCircle[1], paintCircle);
 
         if (routineCircles[0][0] == -1 ) {
             for (int i = 0; i < 6; i++) {
@@ -88,6 +94,16 @@ public class CustomViewTimeTable extends View {
                 routineCircles[i][1] = canvas_height * ((i / 3) * 2 + 9) / 12;
                 routineCircles[i][2] = radius / 4;
             }
+            // 처음 draw할 때 hourXYs를 초기화.
+            hourXYs[0][0] = midpoint_x;
+            hourXYs[0][1] = midpoint_y - radius;
+            hourXYs[6][0] = midpoint_x + radius;
+            hourXYs[6][1] = midpoint_y;
+            hourXYs[12][0] = midpoint_x;
+            hourXYs[12][1] = midpoint_y + radius;
+            hourXYs[18][0] = midpoint_x - radius;
+            hourXYs[18][1] = midpoint_y;
+
         }
 
         for (int i = 0; i < 6; i++) {
@@ -96,17 +112,25 @@ public class CustomViewTimeTable extends View {
             routineCirclesBase[i][2] = radius / 4;
         }
 
-//        canvas.drawCircle(canvas_width / 6, canvas_height * 9 / 12, radius / 4, paintCircle);
-//        canvas.drawCircle(canvas_width / 2, canvas_height * 9 / 12, radius / 4, paintCircle);
-//        canvas.drawCircle(canvas_width * 5 / 6, canvas_height * 9 / 12, radius / 4, paintCircle);
-//        canvas.drawCircle(canvas_width / 6, canvas_height * 11 / 12, radius / 4, paintCircle);
-//        canvas.drawCircle(canvas_width / 2, canvas_height * 11 / 12, radius / 4,  paintCircle);
-//        canvas.drawCircle(canvas_width * 5 / 6, canvas_height * 11 / 12, radius / 4, paintCircle);
-
         for (int i=0; i<6; i++) {
             paintCircle.setColor(Color.parseColor(routineColors[i]));
             canvas.drawCircle(routineCircles[i][0], routineCircles[i][1], routineCircles[i][2], paintCircle);
             canvas.drawCircle(routineCirclesBase[i][0], routineCirclesBase[i][1], routineCirclesBase[i][2], paintCircle);
+        }
+
+        // 시간을 선택해야 하는 경우 시간마다 파란색으로 표시한다.
+        if (selectingTime == true) {
+            paint.setStyle(Paint.Style.FILL);
+            paint.setColor(Color.BLUE);
+            paint.setStrokeWidth(8f);
+            for(int i=0; i<24; i++) {
+                if (hourXYs[i][0] == 0 || hourXYs[i][1] == 0)
+                    continue;
+                canvas.drawCircle((float) hourXYs[i][0], (float) hourXYs[i][1], routineCircles[0][2]/4, paint);
+            }
+            //canvas.drawLine(0, 0, midpoint_x, midpoint_y, paint);
+            Toast.makeText(getContext(), "dot painted(" + hourXYs[3][0] + ", " + hourXYs[3][1] + ")" , Toast.LENGTH_SHORT).show();
+
         }
     }
 
@@ -116,68 +140,137 @@ public class CustomViewTimeTable extends View {
     public boolean onTouchEvent(MotionEvent event) {
         boolean value = super.onTouchEvent(event);
 
-        switch (event.getAction()) {
-            case MotionEvent.ACTION_DOWN: {
-                return true;
-            }
+//        int down_x, down_y;
+        int up_x, up_y;
+//        int start_hour = -1;
+        int stop_hour = -1;
+        // 시간을 선택하는 중이 아니라면 루틴을 선택해 드래그 앤 드롭을 하는 기능을 해야 한다.
+        if (selectingTime == false) {
 
-            case MotionEvent.ACTION_MOVE: {
-                int x = (int) event.getX();
-                int y = (int) event.getY();
-                double dx, dy;
-
-                for(int i=0; i<6; i++) {
-                    dx = Math.pow(x - routineCircles[i][0], 2);
-                    dy = Math.pow(y - routineCircles[i][1], 2);
-                    if (dx + dy < Math.pow(routineCircles[i][2], 2)) {
-                        // Touched
-                        if (curr_routine == -1 || curr_routine == i) {
-                            curr_routine = i;
-                            routineCircles[i][0] = x;
-                            routineCircles[i][1] = y;
-
-                            postInvalidate();
-                            return true;
-                        }
-                    }
+            switch (event.getAction()) {
+                case MotionEvent.ACTION_DOWN: {
+                    return true;
                 }
-                return value;
-            }
-            case MotionEvent.ACTION_UP: {
-                int x = (int) event.getX();
-                int y = (int) event.getY();
 
-                double dx = Math.pow(x - timeCircle[0], 2);
-                double dy = Math.pow(y - timeCircle[1], 2);
-                if (dx + dy < Math.pow(timeCircle[2], 2)) {
-                    for(int i=0; i<6; i++) {
+                case MotionEvent.ACTION_MOVE: {
+                    int x = (int) event.getX();
+                    int y = (int) event.getY();
+                    double dx, dy;
+
+                    for (int i = 0; i < 6; i++) {
                         dx = Math.pow(x - routineCircles[i][0], 2);
                         dy = Math.pow(y - routineCircles[i][1], 2);
                         if (dx + dy < Math.pow(routineCircles[i][2], 2)) {
-                            // Dropped
-                            Toast.makeText(getContext(), "dropped", Toast.LENGTH_SHORT).show();
+                            // Touched
+                            if (curr_routine == -1 || curr_routine == i) {
+                                curr_routine = i;
+                                routineCircles[i][0] = x;
+                                routineCircles[i][1] = y;
 
-
-                            Intent myintent = new Intent(getContext(), TimePicker.class);
-                            myintent.putExtra("idx", i);
-                            getContext().startActivity(myintent);
-
-                            //myArcAttr.addArc(500, 60,  i);
-
-                            routineCircles[i][0] = routineCirclesBase[i][0];
-                            routineCircles[i][1] = routineCirclesBase[i][1];
-                            routineCircles[i][2] = routineCirclesBase[i][2];
-
-                            curr_routine = -1;
-                            postInvalidate();
-                            return false;
+                                postInvalidate();
+                                return true;
+                            }
                         }
                     }
+                    return value;
+                }
+                case MotionEvent.ACTION_UP: {
+                    int x = (int) event.getX();
+                    int y = (int) event.getY();
+
+                    double dx = Math.pow(x - timeCircle[0], 2);
+                    double dy = Math.pow(y - timeCircle[1], 2);
+                    if (dx + dy < Math.pow(routineCircles[0][2], 2)) {
+                        selectingTime = true;
+                        routineCircles[curr_routine][0] = routineCirclesBase[curr_routine][0];
+                        routineCircles[curr_routine][1] = routineCirclesBase[curr_routine][1];
+                        routineCircles[curr_routine][2] = routineCirclesBase[curr_routine][2];
+                        curr_color = curr_routine;
+                        Toast.makeText(getContext(), "curr color : "+curr_color, Toast.LENGTH_SHORT).show();
+                        curr_routine = -1;
+                        postInvalidate();
+                        return false;
+                    } else if (dx + dy < Math.pow(timeCircle[2], 2)) {
+                        for (int i = 0; i < 6; i++) {
+                            dx = Math.pow(x - routineCircles[i][0], 2);
+                            dy = Math.pow(y - routineCircles[i][1], 2);
+                            if (dx + dy < Math.pow(routineCircles[i][2], 2)) {
+                                // Dropped
+                                Toast.makeText(getContext(), "dropped", Toast.LENGTH_SHORT).show();
+
+
+                                Intent myintent = new Intent(getContext(), TimePicker.class);
+                                myintent.putExtra("idx", i);
+                                getContext().startActivity(myintent);
+
+                                //myArcAttr.addArc(500, 60,  i);
+
+                                routineCircles[i][0] = routineCirclesBase[i][0];
+                                routineCircles[i][1] = routineCirclesBase[i][1];
+                                routineCircles[i][2] = routineCirclesBase[i][2];
+
+                                curr_routine = -1;
+                                postInvalidate();
+                                return false;
+                            }
+                        }
+                    }
+
+                    return value;
                 }
 
-                return value;
             }
+        }
+        // 시간을 선택하는 중이라면 시간을 선택해 1시간짜리 루틴을 설정하도록 해야 한다.
+        else {
+            switch (event.getAction()) {
 
+                case MotionEvent.ACTION_DOWN: {
+
+                    return true;
+                }
+
+                case MotionEvent.ACTION_MOVE: {
+
+//                    down_x = (int) event.getX();
+//                    down_y = (int) event.getY();
+//
+//                    for(int i=0; i<24; i++) {
+//                        double dx = Math.pow(down_x - hourXYs[i][0], 2);
+//                        double dy = Math.pow(down_y - hourXYs[i][1], 2);
+//                        if (dx + dy < Math.pow(routineCircles[0][2] / 4, 2)) {
+//                            if (start_hour == -1) {
+//                                start_hour = i;
+//                            }
+//
+//                        }
+//                    }
+
+                    return value;
+                }
+                case MotionEvent.ACTION_UP: {
+                    up_x = (int) event.getX();
+                    up_y = (int) event.getY();
+                    for(int i=0; i<24; i++) {
+                        double dx = Math.pow(up_x - hourXYs[i][0], 2);
+                        double dy = Math.pow(up_y - hourXYs[i][1], 2);
+                        if (dx + dy < Math.pow(routineCircles[0][2] / 4, 2)) {
+                            stop_hour = i;
+                            myArcAttr.addArc(stop_hour * 60,  60,  curr_color);
+                            Toast.makeText(getContext(), "stopHour:"+stop_hour, Toast.LENGTH_SHORT).show();
+
+                            selectingTime = false;
+                            postInvalidate();
+                        }
+                    }
+
+                    selectingTime = false;
+                    postInvalidate();
+
+                    return value;
+                }
+
+            }
         }
 
         return value;
