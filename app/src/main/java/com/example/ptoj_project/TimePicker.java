@@ -1,5 +1,8 @@
 package com.example.ptoj_project;
 
+import static android.widget.Toast.LENGTH_SHORT;
+import static java.security.AccessController.getContext;
+
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
@@ -11,6 +14,8 @@ import android.widget.Button;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import java.security.AccessController;
 
 public class TimePicker extends AppCompatActivity {
 
@@ -101,14 +106,22 @@ public class TimePicker extends AppCompatActivity {
 
 
     public void btnClick(View view) {
-        if (view.getId() == R.id.btn_apply) {
-            myArcAttr.addArc(startMin, sweepMin, idx);
-            Intent intent = new Intent(TimePicker.this, MenuActivity.class);
-            startActivity(intent);
+    if (view.getId() == R.id.btn_apply) {
+        int ret;
+        ret = myArcAttr.isMinAvailable(startMin, sweepMin);
+        if (ret != 0) {
+            Toast.makeText(getApplicationContext(), "이미 해당 시간에 루틴이 존재합니다 " + ret , Toast.LENGTH_SHORT).show();
+            return;
         }
-        else if (view.getId() == R.id.btn_exit) {
-            Intent intent = new Intent(TimePicker.this, MenuActivity.class);
-            startActivity(intent);
-        }
+
+        myArcAttr.addArc(startMin, sweepMin, idx);
+        Intent intent = new Intent(TimePicker.this, MenuActivity.class);
+        startActivity(intent);
+    }
+    else if (view.getId() == R.id.btn_exit) {
+        Intent intent = new Intent(TimePicker.this, MenuActivity.class);
+        startActivity(intent);
+    }
+
     }
 }

@@ -139,10 +139,12 @@ public class CustomViewTimeTable extends View {
             for(int i=0; i<24; i++) {
                 if (hourXYs[i][0] == 0 || hourXYs[i][1] == 0)
                     continue;
+                if (myArcAttr.isHourAvailable(i) == -1)
+                    continue;
                 canvas.drawCircle((float) hourXYs[i][0], (float) hourXYs[i][1], routineCircles[0][2]/4, paint);
             }
             //canvas.drawLine(0, 0, midpoint_x, midpoint_y, paint);
-            Toast.makeText(getContext(), "dot painted(" + hourXYs[3][0] + ", " + hourXYs[3][1] + ")" , Toast.LENGTH_SHORT).show();
+            //Toast.makeText(getContext(), "dot painted(" + hourXYs[3][0] + ", " + hourXYs[3][1] + ")" , Toast.LENGTH_SHORT).show();
 
         }
     }
@@ -199,7 +201,7 @@ public class CustomViewTimeTable extends View {
                         routineCircles[curr_routine][1] = routineCirclesBase[curr_routine][1];
                         routineCircles[curr_routine][2] = routineCirclesBase[curr_routine][2];
                         curr_color = curr_routine;
-                        Toast.makeText(getContext(), "curr color : "+curr_color, Toast.LENGTH_SHORT).show();
+                        //Toast.makeText(getContext(), "curr color : "+curr_color, Toast.LENGTH_SHORT).show();
                         curr_routine = -1;
                         postInvalidate();
                         return false;
@@ -209,7 +211,7 @@ public class CustomViewTimeTable extends View {
                             dy = Math.pow(y - routineCircles[i][1], 2);
                             if (dx + dy < Math.pow(routineCircles[i][2], 2)) {
                                 // Dropped
-                                Toast.makeText(getContext(), "dropped", Toast.LENGTH_SHORT).show();
+                                // Toast.makeText(getContext(), "dropped", Toast.LENGTH_SHORT).show();
 
 
                                 Intent myintent = new Intent(getContext(), TimePicker.class);
@@ -227,6 +229,11 @@ public class CustomViewTimeTable extends View {
                                 return false;
                             }
                         }
+                        // 루틴을 드래그 앤 드롭한 것이 아니라 타임테이블 원 안을 그냥 터치한 경우
+                        // 클릭한 위치에 배정된 루틴이 있는 경우 (= 사용자가 시간표에 얹어진 루틴을 클릭한 경우) 를 판별해
+                        // 이 경우 터치된 루틴을 수정 / 삭제하는 코드가 작성되어야 한다.
+                        Toast.makeText(getContext(), "일반 클릭" , Toast.LENGTH_SHORT).show();
+
                     }
 
                     return value;
@@ -270,7 +277,7 @@ public class CustomViewTimeTable extends View {
                         if (dx + dy < Math.pow(routineCircles[0][2] / 4, 2)) {
                             stop_hour = i;
                             myArcAttr.addArc(stop_hour * 60,  60,  curr_color);
-                            Toast.makeText(getContext(), "stopHour:"+stop_hour, Toast.LENGTH_SHORT).show();
+                            //Toast.makeText(getContext(), "stopHour:"+stop_hour, Toast.LENGTH_SHORT).show();
 
                             selectingTime = false;
                             postInvalidate();

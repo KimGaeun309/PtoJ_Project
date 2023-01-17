@@ -27,4 +27,5 @@ public class Arc {
     }
 
     public int getRoutine() { return routine; }
+
 }

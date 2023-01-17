@@ -28,4 +28,48 @@ public class ArcArrSingleton {
     public int getLength() {
         return idx;
     }
+
+    public float isHourAvailable(int hour) {
+        float s_hour, e_hour;
+        for(int i=0; i<idx; i++) {
+            s_hour = ArcList[i].startMinute / 60;
+            e_hour = (s_hour + (ArcList[i].sweepMinute / 60)) % 24;
+            if (s_hour >= hour && s_hour < hour+1)
+                return -1;
+            if (e_hour > hour && e_hour <= hour+1)
+                return -1;
+            if (s_hour < e_hour) {
+                if (s_hour >= hour && e_hour <= hour+1)
+                    return -1;
+            }
+            else if (s_hour < hour || e_hour > hour)
+                return -1;
+        }
+        return 0;
+    }
+
+    public int isMinAvailable(int start_min, int sweep_min) {
+        float s_hour, e_hour;
+        float hour, sweep_hour;
+        hour = start_min / 60;
+        sweep_hour = sweep_min / 60;
+        for(int i=0; i<idx; i++) {
+            s_hour = ArcList[i].startMinute / 60;
+            e_hour = (s_hour + (ArcList[i].sweepMinute / 60)) % 24;
+
+            if (s_hour >= hour && s_hour < hour + sweep_hour)
+                return -1;
+            if (e_hour > hour && e_hour <= hour+sweep_hour)
+                return -2;
+            if (s_hour <= e_hour) {
+                if (s_hour >= hour && e_hour <= hour+sweep_hour)
+                    return -3;
+            }
+            else{
+                if (s_hour <= hour || e_hour >= (hour+sweep_hour)%24)
+                    return -4;
+            }
+        }
+        return 0;
+    }
 }
