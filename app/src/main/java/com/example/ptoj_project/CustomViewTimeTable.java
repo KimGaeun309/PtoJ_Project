@@ -1,15 +1,26 @@
 package com.example.ptoj_project;
 
+
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.RectF;
+import android.graphics.drawable.BitmapDrawable;
 import android.util.AttributeSet;
 import android.util.Log;
+import android.view.Gravity;
+import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.PopupMenu;
+import android.widget.PopupWindow;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 
@@ -21,6 +32,7 @@ public class CustomViewTimeTable extends View {
     private ArcArrSingleton myArcAttr;
     private String[] routineColors = {"#ffe4b5", "#48d1cc", "#f0e68c", "#ffc0cb", "#87cddb", "#ffa07a", "#8fbc8f"};
     private int[][] routineCircles = new int[6][3];
+    private String[] routineNames = {"Sleep", "Study", "Exercise", "Rest", "Eat", "Outdoor"};
     private int[][] routineCirclesBase = new int[6][3];
     private int[] timeCircle = new int[3];
     private double[][] hourXYs = new double[24][2]; // hourXYs[i] 에는 i 시간에 해당하는 좌표를 2차원 배열로 저장
@@ -216,6 +228,7 @@ public class CustomViewTimeTable extends View {
 
                                 Intent myintent = new Intent(getContext(), TimePicker.class);
                                 myintent.putExtra("idx", i);
+                                myintent.putExtra("arclist_idx", myArcAttr.getLength());
                                 getContext().startActivity(myintent);
 
                                 //myArcAttr.addArc(500, 60,  i);
@@ -232,7 +245,64 @@ public class CustomViewTimeTable extends View {
                         // 루틴을 드래그 앤 드롭한 것이 아니라 타임테이블 원 안을 그냥 터치한 경우
                         // 클릭한 위치에 배정된 루틴이 있는 경우 (= 사용자가 시간표에 얹어진 루틴을 클릭한 경우) 를 판별해
                         // 이 경우 터치된 루틴을 수정 / 삭제하는 코드가 작성되어야 한다.
-                        Toast.makeText(getContext(), "일반 클릭" , Toast.LENGTH_SHORT).show();
+
+                        int routine_idx;
+                        float angle;
+                        angle = (float) Math.toDegrees(Math.atan2(y - timeCircle[1], x - timeCircle[0]));
+                        if (angle < 0) angle = 360 + angle; // 터치한 곳의 좌표에 따른 좌표 계산
+                        routine_idx = myArcAttr.findRoutine(angle);
+                        if (routine_idx >= 0) {
+                            int startH = 0, startM = 0, sweepH = 0, sweepM = 0;
+                            startH = (int) (myArcAttr.ArcList[routine_idx].startMinute / 60);
+                            startM = (int) myArcAttr.ArcList[routine_idx].startMinute - 60 * startH;
+                            sweepH = (int) (myArcAttr.ArcList[routine_idx].sweepMinute / 60);
+                            sweepM = (int) myArcAttr.ArcList[routine_idx].sweepMinute - 60 * sweepH;
+
+                            AlertDialog.Builder builder;
+
+                            String[] dialog_menus;
+
+                            dialog_menus = getResources().getStringArray(R.array.dialog_menu);
+                            builder = new AlertDialog.Builder(getContext());
+                            builder.setTitle("[" + routineNames[myArcAttr.ArcList[routine_idx].getRoutine()] + "] " + startH + "시 " + startM + "분 부터 " + sweepH + "시간 " + sweepM + "분 동안");
+
+                            builder.setItems(dialog_menus, new DialogInterface.OnClickListener() {
+                               @Override
+                               public void onClick(DialogInterface dialog, int which) {
+                                   //Toast.makeText(getContext(), "선택된 것은 " + dialog_menus[which] , Toast.LENGTH_SHORT).show();
+                                   if (which == 0) { // Delete
+                                       AlertDialog.Builder msgBuilder = new AlertDialog.Builder(getContext())
+                                               .setTitle("루틴 삭제")
+                                               .setMessage("이 루틴을 정말 삭제하시겠습니까?")
+                                               .setPositiveButton("삭제", new DialogInterface.OnClickListener() {
+                                                   @Override
+                                                   public void onClick(DialogInterface dialogInterface, int i) {
+                                                       myArcAttr.deleteRoutine(routine_idx);
+                                                       postInvalidate();
+                                                   }
+                                               })
+                                               .setNegativeButton("취소", new DialogInterface.OnClickListener() {
+                                                   @Override
+                                                   public void onClick(DialogInterface dialogInterface, int i) {
+                                                   }
+                                               });
+                                       AlertDialog msgDlg = msgBuilder.create();
+                                       msgDlg.show();
+                                   }
+                                   else if (which == 1) { // Modify
+                                       Intent myintent = new Intent(getContext(), TimePicker.class);
+                                       myintent.putExtra("idx", myArcAttr.ArcList[routine_idx].getRoutine());
+                                       myintent.putExtra("arclist_idx", routine_idx);
+                                       getContext().startActivity(myintent);
+
+                                   }
+                               }
+                            });
+
+                            AlertDialog alertDialog = builder.create();
+                            alertDialog.show();
+
+                        }
 
                     }
 

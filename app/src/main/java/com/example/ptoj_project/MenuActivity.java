@@ -4,11 +4,12 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.widget.TextView;
 import android.widget.Toast;
 
 public class MenuActivity extends AppCompatActivity {
     ArcArrSingleton myArcAttr = ArcArrSingleton.getInstance();
-    private CustomViewTimeTable CustomViewTT;
+    public CustomViewTimeTable CustomViewTT;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -25,6 +26,6 @@ public class MenuActivity extends AppCompatActivity {
         //Toast.makeText(getApplicationContext(), "addArc() 를 사용해 부채꼴 두 개 생성", Toast.LENGTH_SHORT).show();
 
         // activity_menu.xml 에 만들어 둔 CustomViewTimeTable 뷰를 id로 가져오기
-        CustomViewTT = (CustomViewTimeTable) findViewById(R.id.customViewTT);
+        //CustomViewTT = (CustomViewTimeTable) findViewById(R.id.customViewTT);
     }
 }

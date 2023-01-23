@@ -72,4 +72,22 @@ public class ArcArrSingleton {
         }
         return 0;
     }
+
+    public int findRoutine(float angle) {
+        for (int i=0; i<idx; i++) {
+            float start_angle, end_angle;
+            start_angle = ArcList[i].getStartAngle();
+            end_angle = start_angle + ArcList[i].getSweepAngle();
+            if (start_angle <= angle && angle <= end_angle)
+                return i;
+        }
+        return -1;
+    }
+
+    public void deleteRoutine(int routine_idx) {
+        for(int i = routine_idx+1; i < idx; i++) {
+            ArcList[i-1] = ArcList[i];
+        }
+        idx -= 1;
+    }
 }
